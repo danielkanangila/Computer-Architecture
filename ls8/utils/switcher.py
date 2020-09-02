@@ -10,6 +10,5 @@ class Switcher:
 
     def switch(self, instruction):
         if not instruction in self.IR:
-            print(f"Incorrect command: {instruction}")
-            sys.exit(1)
+            raise Exception("Incorrect command.")
         return self.IR.get(instruction)(instruction)
