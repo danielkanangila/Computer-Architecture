@@ -87,7 +87,7 @@ class CPU(InstructionSwitcher):
             # excute the corresponding function to the current instruction
             # self.switcher.switch(IR)
             self.switch(IR)
-
+            # move to next instruction
             if (IR & 0b00010000) >> 4 == 0:
                 # increment the pc
                 self.pc += operand_count + 1
