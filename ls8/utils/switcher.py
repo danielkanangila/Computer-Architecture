@@ -8,7 +8,7 @@ class Switcher:
     def case(self, instruction, fn):
         self.IR[instruction] = fn
 
-    def switch(self, instruction):
+    def switch(self, instruction, *args, **kwargs):
         if not instruction in self.IR:
             raise Exception("Incorrect command.")
-        return self.IR.get(instruction)(instruction)
+        return self.IR.get(instruction)(instruction, *args, **kwargs)
