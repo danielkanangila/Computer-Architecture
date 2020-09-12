@@ -15,6 +15,7 @@ class CPU(InstructionSwitcher):
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0
+        self.flag = 0b00000000
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -46,8 +47,14 @@ class CPU(InstructionSwitcher):
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
+
         # initialize alu switch
         alu = ALUSwitcher()
+        # the instruction is CMP = 0b10100111
+        if op == 0b10100111:
+            self.flag = alu.cmp(self.reg[reg_a], self.reg[reg_b])
+            return
+        # for all other alu ops
         solution = alu.switch(op, self.reg[reg_a], self.reg[reg_b])
         # save the result
         self.reg[reg_a] = solution

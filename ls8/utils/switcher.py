@@ -10,5 +10,6 @@ class Switcher:
 
     def switch(self, instruction, *args, **kwargs):
         if not instruction in self.IR:
+            print(instruction)
             raise Exception("Incorrect command.")
         return self.IR.get(instruction)(instruction, *args, **kwargs)

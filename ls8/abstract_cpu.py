@@ -7,6 +7,7 @@ class AbstractCPU(ABC):
         self.ram = []
         self.reg = []
         self.pc = 0
+        self.flag = 0b00000000
 
     @abstractmethod
     def ram_read(self, MAR):

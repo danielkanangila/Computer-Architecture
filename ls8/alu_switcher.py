@@ -3,6 +3,7 @@ ADD = 0b10100000
 MUL = 0b10100010
 DIV = 0b10100011
 SUB = 0b10100001
+CMP = 0b10100111
 
 
 class ALUSwitcher(Switcher):
@@ -27,3 +28,11 @@ class ALUSwitcher(Switcher):
 
     def div(self, ir, *args):
         return args[0] / args[1]
+
+    def cmp(self, reg_a, reg_b):
+        if reg_a == reg_b:
+            return 0b00000001
+        elif reg_a < reg_b:
+            return 0b00000100
+        elif reg_a > reg_b:
+            return 0b00000010

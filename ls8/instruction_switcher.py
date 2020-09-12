@@ -9,10 +9,16 @@ PRN = 0b01000111
 HLT = 0b00000001
 ADD = 0b10100000
 MUL = 0b10100010
+DIV = 0b10100011
+SUB = 0b10100001
 PUSH = 0b01000101
 POP = 0b01000110
 CALL = 0b01010000
 RET = 0b00010001
+CMP = 0b10100111
+JMP = 0b01010100
+JEQ = 0b01010101
+JNE = 0b01010110
 
 SP = 7
 
@@ -26,10 +32,16 @@ class InstructionSwitcher(AbstractCPU, Switcher):
         self.case(PRN, lambda IR: self.prn())
         self.case(ADD, lambda IR: self.alu_ir(IR))
         self.case(MUL, lambda IR: self.alu_ir(IR))
+        self.case(SUB, lambda IR: self.alu_ir(IR))
+        self.case(DIV, lambda IR: self.alu_ir(IR))
+        self.case(CMP, lambda IR: self.alu_ir(IR))
         self.case(PUSH, lambda IR: self.push())
         self.case(POP, lambda IR: self.pop())
         self.case(CALL, lambda IR: self.call())
         self.case(RET, lambda IR: self.ret())
+        self.case(JMP, lambda IR: self.jmp())
+        self.case(JEQ, lambda IR: self.jeq())
+        self.case(JNE, lambda IR: self.jne())
         self.case(HLT, lambda IR: sys.exit(0))
 
     def ldi(self):
@@ -86,3 +98,25 @@ class InstructionSwitcher(AbstractCPU, Switcher):
         self.pc = self.ram_read(self.reg[SP])
         # pop the value to the stack
         self.reg[SP] += 1
+
+    def jmp(self):
+        # Jump to the address stored in the given register
+        register = self.ram_read(self.pc + 1)
+        # set the program counter to the address of the given register
+        self.pc = self.reg[register]
+
+    def jeq(self):
+        # If equal flag is set (true), jump to the address stored in the given register
+        if self.flag & 0b00000001 == 1:
+            register = self.ram_read(self.pc + 1)
+            self.pc = self.reg[register]
+        else:
+            self.pc += 2
+
+    def jne(self):
+        # If E flag is clear (false, 0), jump to the address stored in the given register.
+        if self.flag & 0b00000001 == 0:
+            register = self.ram_read(self.pc + 1)
+            self.pc = self.reg[register]
+        else:
+            self.pc += 2
