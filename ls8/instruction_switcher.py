@@ -11,6 +11,8 @@ ADD = 0b10100000
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
+CALL = 0b01010000
+RET = 0b00010001
 
 SP = 7
 
@@ -26,6 +28,8 @@ class InstructionSwitcher(AbstractCPU, Switcher):
         self.case(MUL, lambda IR: self.alu_ir(IR))
         self.case(PUSH, lambda IR: self.push())
         self.case(POP, lambda IR: self.pop())
+        self.case(CALL, lambda IR: self.call())
+        self.case(RET, lambda IR: self.ret())
         self.case(HLT, lambda IR: sys.exit(0))
 
     def ldi(self):
@@ -65,4 +69,20 @@ class InstructionSwitcher(AbstractCPU, Switcher):
         # copy the value to the register
         self.reg[register] = last_value
         # Increment the SP
+        self.reg[SP] += 1
+
+    def call(self):
+        # decrement the stack pointer
+        self.reg[SP] -= 1
+        # Get the register location
+        register = self.ram_read(self.pc + 1)
+        # store the return address to the stack
+        self.ram_write(self.reg[SP], self.pc + 2)
+        # set the program counter to the value of the where the function is stored
+        self.pc = self.reg[register]
+
+    def ret(self):
+        # set the program counter to the value at the top of the memory stack
+        self.pc = self.ram_read(self.reg[SP])
+        # pop the value to the stack
         self.reg[SP] += 1

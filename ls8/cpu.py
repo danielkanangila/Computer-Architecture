@@ -75,6 +75,7 @@ class CPU(InstructionSwitcher):
     def run(self):
         """Run the CPU."""
         self.load()
+        # initialize instructions switcher
         self.init_switcher()
 
         running = True
